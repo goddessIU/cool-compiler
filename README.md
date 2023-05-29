@@ -1,3 +1,6 @@
+1. 相关镜像存储在了阿里云盘 Compilers.rar就是我们最终版，解压后可以直接用的
+另一个是初始版
+
 pa2: 60/63, i can't figure the situation that, null in the string; I use the regular expression to solve it , but it doesn't 
 work. the perfect answer which i copied from github is 63/63. The author of it not just use the simple regular expression
 to solve the problem, he use some logical expression to solve it , and it does work. But i don't know why my solution 
@@ -70,3 +73,5 @@ traverse， 没有整体思考好每一部分做哪些最合适；还有比如�
 整体设计不太好，很多地方有点面向测试了，最后shit山了（主要那个vim和操作系统实在难用，体验差，加上该期末了，
 我就没精力了，就凑乎一下了）
 然后gc没做，不过gc不做不影响分数，不知道为啥
+
+
