@@ -1,0 +1,103 @@
+#include <assert.h>
+#include <stdio.h>
+#include <map>
+#include <vector>
+#include "emit.h"
+#include "cool-tree.h"
+#include "symtab.h"
+
+enum Basicness     {Basic, NotBasic};
+#define TRUE 1
+#define FALSE 0
+
+class CgenClassTable;
+typedef CgenClassTable *CgenClassTableP;
+
+class CgenNode;
+typedef CgenNode *CgenNodeP;
+
+typedef std::map<Symbol, int> sym_int_type;
+typedef std::map<Symbol, sym_int_type> idx_map_type;
+
+class CgenClassTable : public SymbolTable<Symbol,CgenNode> {
+private:
+   List<CgenNode> *nds;
+   ostream& str;
+   int stringclasstag;
+   int intclasstag;
+   int boolclasstag;
+   int tag_counter;
+
+
+// The following methods emit code for
+// constants and global declarations.
+   void code_tag(CgenNodeP l);
+   void code_global_data();
+   void code_global_text();
+   void code_bools(int);
+   void code_select_gc();
+   void code_constants();
+   void code_name_tab_help(Symbol s);
+   void code_name_tab(CgenNodeP l);
+   void code_obj_tab(CgenNodeP l, std::vector<Symbol>& que, int idx);
+   int code_disp_tab_helper(CgenNode *l, sym_int_type* smap, int cnt, std::map<Symbol, Symbol>* name_map);
+   void code_disp_tab(CgenNodeP l);
+   void code_prot_obj(CgenNodeP l);
+   void code_obj_init(CgenNodeP l);
+   void make_name_map(CgenNodeP l, std::map<Symbol, Symbol>*name_map);
+   void code_obj_tab_help(Symbol s);
+
+   int code_attr_helper(CgenNodeP l, sym_int_type* smap, int tag_idx);
+   void code_method(CgenNodeP l);
+
+  // int get_method_idx(Symbol type, Symbol name);
+  // int get_attr_idx(Symbol type, Symbol name);
+
+// The following creates an inheritance graph from
+// a list of classes.  The graph is implemented as
+// a tree of `CgenNode', and class names are placed
+// in the base class symbol table.
+
+   void install_basic_classes();
+   void install_class(CgenNodeP nd);
+   void install_classes(Classes cs);
+   void build_inheritance_tree();
+   void set_relations(CgenNodeP nd);
+public:
+   CgenClassTable(Classes, ostream& str);
+   void code();
+   CgenNodeP root();
+   int get_tag() { return tag_counter++; }
+};
+
+
+class CgenNode : public class__class {
+private: 
+   CgenNodeP parentnd;                        // Parent of class
+   List<CgenNode> *children;                  // Children of class
+   Basicness basic_status;                    // `Basic' if class is basic
+                                              // `NotBasic' otherwise
+   int tag;
+public:
+   CgenNode(Class_ c,
+            Basicness bstatus,
+            CgenClassTableP class_table);
+
+   void add_child(CgenNodeP child);
+   List<CgenNode> *get_children() { return children; }
+   void set_parentnd(CgenNodeP p);
+   int get_tag() {return tag;}
+   CgenNodeP get_parentnd() { return parentnd; }
+   int basic() { return (basic_status == Basic); }
+};
+
+class BoolConst 
+{
+ private: 
+  int val;
+ public:
+  BoolConst(int);
+  void code_def(ostream&, int boolclasstag);
+  void code_ref(ostream&) const;
+};
+

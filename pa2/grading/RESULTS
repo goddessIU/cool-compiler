@@ -1,0 +1,3 @@
+	-1 (escapednull)	 escaped null char in a string
+	-1 (null_in_string)	 null char in string
+	-1 (null_in_string_followed_by_tokens)	 null char in string, then tokens

@@ -1,0 +1,1 @@
+sudo ./lexer example.cl | ./parser | ./semant | ./cgen | m.s
